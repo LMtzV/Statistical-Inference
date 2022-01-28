@@ -1,0 +1,56 @@
+---
+title: "laboratorio 10 Inferencia Estad Parte R"
+author: "Luis Martinez"
+date: "Otoño 20201"
+output: pdf_document
+number_sections: TRUE
+---
+
+Vamos a correr un modelo de regresión lineal simple en R. 
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(ggcorrplot)
+library(dplyr)
+library(ggpubr)
+```
+
+En este caso vamos a usar los datos \textit{mtcars}, ya cargados a R y realizaremos inferencia sobre los mismos. 
+```{r}
+#Cargamos los datos
+data("mtcars")
+datos.coches<- mtcars
+#Glimpse al data frame
+head(mtcars)
+
+# Manipulación de variables
+x<- datos.coches$wt
+y<- datos.coches$mpg
+
+
+#Correlaciones
+(cor(x, y, method="pearson"))
+(cor(x,y, method = "spearman"))
+(cor(x,y, method = "kendall"))
+
+#Sugerencia de una relacion negativa entre miles per galon y weight
+ggplot(datos.coches, aes(x,y))+geom_point()+stat_smooth()
+
+#Construimos el modelo de regresion lineal simple 
+(modelo<- lm(y~x, data=datos.coches))
+summary(modelo)
+
+#Corremos la Regresion
+ggplot(datos.coches)+ geom_point(aes(x= wt, y= mpg))+
+                      stat_smooth(aes(x= wt, y= mpg), method= "lm",
+                      formula= y ~ x, se=TRUE)+theme_minimal()
+    
+
+#Intervalos de confianza para estimadores del modelo al 97.5%
+confint(modelo)
+
+#Coeficiente de correlación R^2
+#Este coeficiente mide cuanta proporcion del modelo es explicada por la 
+#regresion
+(R.cuadrada<- (cor(x, y, method="pearson"))^2)
+```
